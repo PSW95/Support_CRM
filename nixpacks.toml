@@ -3,13 +3,18 @@ builder = "python"
 pythonVersion = "3.11"
 
 [build.packages]
-pkgs = ["python311"]
+pkgs = ["python311", "python311-pip", "python311-virtualenv"]
 
 [phases.setup]
-nixPkgs = ["python311"]
+nixPkgs = ["python311", "python311-pip", "python311-virtualenv"]
 
 [phases.install]
-cmds = ["pip install -r requirements.txt"]
+cmds = [
+  "python -m venv /opt/venv",
+  "source /opt/venv/bin/activate",
+  "/opt/venv/bin/pip install --upgrade pip",
+  "/opt/venv/bin/pip install -r requirements.txt"
+]
 
-[start]
-cmd = "cd Backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+[phases.start]
+cmd = "cd Backend && /opt/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port $PORT"
