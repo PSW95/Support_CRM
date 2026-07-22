@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL", DATABASE_URL)
 
 # For MySQL, we DON'T use check_same_thread
 engine = create_engine(
