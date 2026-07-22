@@ -1,15 +1,15 @@
 [build]
 builder = "python"
-pythonVersion = "3.10"
+pythonVersion = "3.11"
 
 [build.packages]
-pkgs = ["python310"]
+pkgs = ["python311"]
 
 [phases.setup]
-nixPkgs = ["python310"]
+nixPkgs = ["python311"]
 
 [phases.install]
-cmds = ["pip install -r requirements.txt"]
+cmds = ["pip install --upgrade pip", "pip install -r requirements.txt"]
 
 [start]
 cmd = "cd Backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
