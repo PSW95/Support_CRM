@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Create Ticket - Support CRM{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow-lg p-6 max-w-2xl mx-auto">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6">Create New Support Ticket</h1>
+    
+    <form id="createTicketForm" class="space-y-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Customer Name *</label>
+            <input type="text" id="customerName" required 
+                class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Customer Email *</label>
+            <input type="email" id="customerEmail" required 
+                class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Subject *</label>
+            <input type="text" id="subject" required 
+                class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Description *</label>
+            <textarea id="description" rows="4" required 
+                class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        </div>
+        
+        <div class="flex gap-3 pt-2">
+            <button type="submit" 
+                class="flex-1 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-medium">
+                Create Ticket
+            </button>
+            <a href="/" 
+                class="flex-1 bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition text-center font-medium">
+                Cancel
+            </a>
+        </div>
+    </form>
+    
+    <div id="message" class="mt-4 hidden"></div>
+</div>
+
+<script>
+document.getElementById('createTicketForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        customer_name: document.getElementById('customerName').value,
+        customer_email: document.getElementById('customerEmail').value,
+        subject: document.getElementById('subject').value,
+        description: document.getElementById('description').value
+    };
+    
+    fetch('/api/tickets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        const messageDiv = document.getElementById('message');
+        messageDiv.className = 'mt-4 p-4 rounded-lg bg-green-100 text-green-700';
+        messageDiv.innerHTML = `
+            ✅ Ticket created successfully! 
+            <a href="/ticket/${data.ticket_id}" class="font-semibold underline">View Ticket</a>
+        `;
+        document.getElementById('createTicketForm').reset();
+        setTimeout(() => {
+            window.location.href = `/ticket/${data.ticket_id}`;
+        }, 2000);
+    })
+    .catch(error => {
+        const messageDiv = document.getElementById('message');
+        messageDiv.className = 'mt-4 p-4 rounded-lg bg-red-100 text-red-700';
+        messageDiv.textContent = '❌ Error creating ticket. Please try again.';
+        console.error('Error:', error);
+    });
+});
+</script>
+{% endblock %}
